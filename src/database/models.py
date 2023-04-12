@@ -4,9 +4,9 @@ from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import Date, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
-
 Base = declarative_base()
 
+default_pic: str = "https://res.cloudinary.com/diqkjtgls/image/upload/c_fill,w_250/v1680233623/ContactsApp/default.jpg"
 
 contact_m2m_group = Table(
     "contact_m2m_group",
@@ -17,27 +17,28 @@ contact_m2m_group = Table(
 )
 
 
-class Contact(Base):    
+class Contact(Base):
     __tablename__ = "contacts"
     id = Column(Integer, primary_key=True)
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
-    phone = Column(String(18), nullable=False, unique=True)
-    email = Column(String(255), unique=True, nullable=True, default=None)
+    phone = Column(String(18), nullable=False)
+    email = Column(String(255))
     birthday = Column(Date)
     job = Column(String(255))
-    avatar = Column(String(255), default="https://res.cloudinary.com/diqkjtgls/image/upload/c_fill,w_250/v1680233623/ContactsApp/default.jpg")
+    avatar = Column(String(255), default=default_pic)
     created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     groups = relationship("Group", secondary=contact_m2m_group, backref="contacts")
     user_id = Column(ForeignKey("users.id", ondelete="Cascade"), default=None)
     user = relationship("User", backref="contacts")
-    
+
     def __getstate__(self):
         attributes = self.__dict__.copy()
         attributes["groups"] = self.groups
         return attributes
-    
-    
+
+
 class Group(Base):
     __tablename__ = "groups"
     __table_args__ = (
@@ -67,12 +68,13 @@ class User(Base):
     birthday = Column(Date)
     job = Column(String(255))
     created_at = Column(DateTime, default=func.now())
-    avatar = Column(String(255), default="https://res.cloudinary.com/diqkjtgls/image/upload/c_fill,w_250/v1680233623/ContactsApp/default.jpg")
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    avatar = Column(String(255), default=default_pic)
     refresh_token = Column(String(255))
     role_id = Column(ForeignKey("roles.id", ondelete="CASCADE"), default=None)
     role = relationship("Role", backref="users")
     confirmed = Column(Boolean, default=False)
-    
+
     def __getstate__(self):
         attributes = self.__dict__.copy()
         attributes["role"] = self.role

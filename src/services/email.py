@@ -23,7 +23,22 @@ conf = ConnectionConfig(
 )
 
 
-async def send_email(email: EmailStr, subject: str, template_name: str, username: str, host: str):
+async def send_email(email: EmailStr, subject: str, template_name: str, username: str, host: str) -> None:
+    """
+    The send_email function sends an email to the user with a link that they can click on to verify their account.
+        The function takes in four parameters:
+            1) email - the user's email address, which is used as both the recipient and subject of the message.
+            2) subject - a string containing information about what type of verification this is (e.g., verify_email).
+                This will be used as part of our JWT token for authentication purposes later on when we want to verify
+                whether or not this token was created by us and if it has been tampered with since its
+
+    :param email: EmailStr: Specify the email address of the recipient
+    :param subject: str: Set the subject of the email
+    :param template_name: str: Specify the template to use when sending the email
+    :param username: str: Pass the username to the template
+    :param host: str: Pass the hostname of the server to the template
+    :return: None
+    """
     try:
         token_verification = auth_service.create_email_token({"sub": email, "type": subject})
         message = MessageSchema(
