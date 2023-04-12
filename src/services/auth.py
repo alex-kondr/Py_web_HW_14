@@ -95,9 +95,9 @@ class Auth:
 
     async def decode_refresh_token(self, refresh_token: str):
         """
-        The decode_refresh_token function is used to decode the refresh token.
-        It takes in a refresh_token as an argument and returns the email of the user who owns that token.
-        If there is no such user, it raises an HTTPException with status code 401 (Unauthorized) and detail &quot;Could not validate credentials&quot;.
+        The decode_refresh_token function is used to decode the refresh token. It takes in a refresh_token as an
+        argument and returns the email of the user who owns that token. If there is no such user, it raises an
+        HTTPException with status code 401 (Unauthorized) and detail &quot;Could not validate credentials&quot;.
 
 
         :param self: Represent the instance of the class
@@ -174,7 +174,7 @@ class Auth:
 
         :param self: Represent the instance of the class
         :param token: str: Decode the token
-        :return: A tuple of email and type_
+        :return: A tuple of email and type
         """
         try:
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
