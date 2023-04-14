@@ -73,7 +73,7 @@ async def get_contact_by_fields(user: User,
                                 last_name: str = None,
                                 phone: str = None,
                                 email: str = None,
-                                days_before_birth: int = None) -> List[Type[Contact]]:
+                                days_before_birth: int = 0) -> List[Type[Contact]]:
 
     """
     The get_contact_by_fields function is used to search for contacts by any of the following fields:

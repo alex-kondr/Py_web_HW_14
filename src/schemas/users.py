@@ -5,17 +5,24 @@ from pydantic import BaseModel, Field, EmailStr
 
 
 class UserBase(BaseModel):
+    email: EmailStr
     password: str = Field(min_length=6, max_length=10)
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    username: str = Field(min_length=5, max_length=16, default=None)
+    birthday: Optional[date] = None
+    job: Optional[str] = None
+    phone: str = Field(regex=r"^(\+)[1-9][0-9\-\(\)]{9,16}$", default=None)
 
 
 class UserUpdate(BaseModel):
+    email: Optional[EmailStr]
     first_name: Optional[str]
     last_name: Optional[str]
     username: str = Field(min_length=5, max_length=16)
     birthday: Optional[date]
     job: Optional[str]
-    email: Optional[EmailStr]
-    phone: str = Field(regex=r"^(\+)[1-9][0-9\-\(\)]{9,16}$")
+    phone: Optional[str] = Field(regex=r"^(\+)[1-9][0-9\-\(\)]{9,16}$")
 
 
 class UserModel(UserBase, UserUpdate):

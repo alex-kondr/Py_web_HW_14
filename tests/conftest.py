@@ -47,4 +47,9 @@ def client(session):
 
 @pytest.fixture(scope="module")
 def user():
-    return {"username": "deadpool", "email": "deadpool@example.com", "password": "123456789", "role": "user"}
+    return {"email": "deadpool@example.com", "username": "deadpool", "password": "123456789"}
+
+
+@pytest.fixture(scope="module")
+def user_two():
+    return {"email": "dead@example.com", "username": "dead", "password": "123456789"}

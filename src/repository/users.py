@@ -3,7 +3,7 @@ from typing import Type, Optional
 from sqlalchemy.orm import Session
 
 from src.database.models import User, Role
-from src.schemas.users import UserModel, UserUpdate
+from src.schemas.users import UserBase, UserUpdate
 
 
 async def get_user_by_email(email: str, db: Session) -> Type[User] | None:
@@ -21,21 +21,18 @@ async def get_user_by_email(email: str, db: Session) -> Type[User] | None:
 async def update_user(body: UserUpdate, user: User, db: Session) -> User:
     """
     The update_user function updates a user in the database.
-        Args:
-            body (UserUpdate): The updated user information.
-            user (User): The current version of the User object to be updated.
-            db (Session): A connection to the database that will be used for updating and refreshing data.
 
     :param body: UserUpdate: Get the data from the request body
     :param user: User: Get the user from the database
     :param db: Session: Access the database
-    :return: A user object
+    :return: The updated user
     """
     user.first_name = body.first_name
     user.last_name = body.last_name
     user.birthday = body.birthday
     user.job = body.job
-   
+    user.phone = body.phone
+
     db.commit()
     db.refresh(user)
     return user
@@ -56,18 +53,16 @@ async def update_avatar(email: str, url: str, db: Session) -> Type[User] | None:
     return user
 
 
-async def create_user(body: UserModel, db: Session) -> User:
+async def create_user(body: UserBase, db: Session) -> User:
     """
     The create_user function creates a new user in the database.
-        Args:
-            body (UserModel): The UserModel object containing the data to be inserted into the database.
-            db (Session): The SQLAlchemy Session object used to interact with our PostgresSQL database.
 
-    :param body: UserModel: Validate the request body
-    :param db: Session: Access the database
-    :return: A user object
+    :param body: UserBase: Define the data that is passed in to the function
+    :param db: Session: Pass the database session to the function
+    :return: The new user
+    :doc-author: Trelent
     """
-    new_user = User(**body.dict(), role=Role("user"))
+    new_user = User(**body.dict(), role=Role(name="user"))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
