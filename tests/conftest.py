@@ -52,4 +52,4 @@ def user():
 
 @pytest.fixture(scope="module")
 def user_two():
-    return {"email": "dead@example.com", "username": "dead", "password": "123456789"}
+    return {"email": "dead@example.com", "username": "pooldead", "password": "123456789"}
