@@ -76,12 +76,12 @@ async def update_group(body: GroupUpdate,
     :param current_user: User: Check if the user is an admin or moderator
     :return: A group object
     """
-    if not (current_user.role == "admin" or current_user.role == "moderator"):
+    if not (current_user.role.name == "admin" or current_user.role.name == "moderator"):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Does not have access")
 
     group = await repository_groups.update_group(group_id, body, current_user, db)
     if group is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
     return group
 
 
@@ -100,7 +100,7 @@ async def remove_group(group_id: int,
     :param current_user: User: Get the user that is currently logged in
     :return: The removed group
     """
-    if not (current_user.role == "admin" or current_user.role == "moderator"):
+    if not (current_user.role.name == "admin" or current_user.role.name == "moderator"):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Does not have access")
 
     group = await repository_groups.remove_group(group_id, current_user, db)

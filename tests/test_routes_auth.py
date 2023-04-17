@@ -1,7 +1,7 @@
-import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, AsyncMock
 
 from src.database.models import User
+from src.services.auth import auth_service
 
 
 def get_current_user(user, session):
@@ -109,7 +109,9 @@ def test_request_email_already_confirmed(client, user):
     assert data["message"] == "You email is already confirmed"
 
 
-def test_login_user(client, user):
+def test_login_user(client, user, monkeypatch):
+    monkeypatch.setattr("src.services.auth.auth_service.r.get", AsyncMock(return_value=None))
+    monkeypatch.setattr("src.services.auth.auth_service.r.set", AsyncMock())
     response = client.post(
         "api/auth/login",
         data={
@@ -153,7 +155,7 @@ def test_not_valid_refresh_token(client, session, user):
     )
     assert response.status_code == 401, response.text
     data = response.json()
-    current_user = get_current_user(user, session) 
+    current_user = get_current_user(user, session)
     assert data["detail"] == "Invalid refresh token"
     assert current_user.refresh_token is None
   
@@ -194,4 +196,100 @@ def test_forgot_password_email_not_confirmed(user, session, client):
     assert response.status_code == 403, response.text
     data = response.json()
     assert data["detail"] == "Email not confirmed"
- 
+
+
+def test_reset_password(user, client, session):
+    token = auth_service.create_email_token(
+        {
+            "sub": user.get("email"),
+            "type": "Reset password"
+        }
+    )
+
+    response = client.post(
+        f"api/auth/reset_password/{token}",
+        json={
+            "password": user.get("password")
+        }
+    )
+
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["message"] == "Password updated"
+
+
+def test_reset_password_invalid_token(user, client, session):
+    token = auth_service.create_email_token(
+        {
+            "sub": user.get("email"),
+            "type": "Reset"
+        }
+    )
+
+    response = client.post(
+        f"api/auth/reset_password/{token}",
+        json={
+            "password": user.get("password")
+        }
+    )
+
+    assert response.status_code == 400, response.text
+    data = response.json()
+    assert data["detail"] == "Verification error"
+
+
+def test_already_confirmed_email(user, client, session):
+    token = auth_service.create_email_token(
+        {
+            "sub": user.get("email"),
+            "type": "Confirm email"
+        }
+    )
+
+    response = client.get(
+        f"api/auth/confirmed_email/{token}"
+    )
+
+    assert response.status_code == 200, response.text
+    data = response.json()
+    current_user = get_current_user(user, session)
+    assert data["message"] == "You email is already confirmed"
+    assert current_user.confirmed is True
+
+
+def test_confirmed_email(user, client, session):
+    current_user = get_current_user(user, session)
+    current_user.confirmed = False
+    token = auth_service.create_email_token(
+        {
+            "sub": user.get("email"),
+            "type": "Confirm email"
+        }
+    )
+
+    response = client.get(
+        f"api/auth/confirmed_email/{token}"
+    )
+
+    assert response.status_code == 200, response.text
+    data = response.json()
+    current_user = get_current_user(user, session)
+    assert data["message"] == "Email confirmed"
+    assert current_user.confirmed is True
+
+
+def test_confirmed_email_invalid_token(user, client, session):
+    token = auth_service.create_email_token(
+        {
+            "sub": user.get("email"),
+            "type": "Confirm"
+        }
+    )
+
+    response = client.get(
+        f"api/auth/confirmed_email/{token}"
+    )
+
+    assert response.status_code == 400, response.text
+    data = response.json()
+    assert data["detail"] == "Verification error"

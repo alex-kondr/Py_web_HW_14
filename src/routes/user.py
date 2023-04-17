@@ -43,7 +43,7 @@ async def update_avatar_user(file: UploadFile = File(),
     return user
 
 
-@router.post("/", response_model=UserResponse, status_code=status.HTTP_202_ACCEPTED,
+@router.post("/", response_model=UserDB, status_code=status.HTTP_202_ACCEPTED,
              description="No more than 10 requests per minute",
              dependencies=[Depends(RateLimiter(times=10, seconds=60))])
 async def update_profile(body: UserUpdate,

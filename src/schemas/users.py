@@ -19,7 +19,7 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr]
     first_name: Optional[str]
     last_name: Optional[str]
-    username: str = Field(min_length=5, max_length=16)
+    username: Optional[str] = Field(min_length=5, max_length=16)
     birthday: Optional[date]
     job: Optional[str]
     phone: Optional[str] = Field(regex=r"^(\+)[1-9][0-9\-\(\)]{9,16}$")
