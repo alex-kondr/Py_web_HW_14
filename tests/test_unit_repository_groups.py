@@ -53,7 +53,3 @@ class TestGroups(unittest.IsolatedAsyncioTestCase):
         self.session.query().filter().first.return_value = group
         result = await remove_group(group_id=1, user=self.user, db=self.session)
         self.assertEqual(result, group)
-
-
-if __name__ == '__main__':
-    unittest.main()

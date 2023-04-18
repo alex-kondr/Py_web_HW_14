@@ -32,7 +32,7 @@ def token(client, session, user, monkeypatch):
     return data["access_token"]
 
 
-def test_create_group_forbidden(client, user, token):
+def test_create_group_forbidden(client, token):
     response = client.post(
         "api/groups",
         headers={"Authorization": f"Bearer {token}"},
@@ -120,7 +120,10 @@ def test_update_group_admin(client, token):
     assert "id" in data
 
 
-def test_read_groups(client, token):
+def test_read_groups(client, token, monkeypatch):
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.redis", AsyncMock())
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.identifier", AsyncMock())
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.http_callback", AsyncMock())
     response = client.get(
         "api/groups",
         headers={"Authorization": f"Bearer {token}"}
@@ -133,7 +136,10 @@ def test_read_groups(client, token):
     assert "id" in data[0]
 
 
-def test_read_group(client, token):
+def test_read_group(client, token, monkeypatch):
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.redis", AsyncMock())
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.identifier", AsyncMock())
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.http_callback", AsyncMock())
     response = client.get(
         "api/groups/1",
         headers={"Authorization": f"Bearer {token}"}
@@ -145,7 +151,10 @@ def test_read_group(client, token):
     assert "id" in data
 
 
-def test_read_group_2(client, token):
+def test_read_group_2(client, token, monkeypatch):
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.redis", AsyncMock())
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.identifier", AsyncMock())
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.http_callback", AsyncMock())
     response = client.get(
         "api/groups/2",
         headers={"Authorization": f"Bearer {token}"}

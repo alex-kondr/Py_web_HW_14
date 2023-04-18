@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock, AsyncMock
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -53,3 +55,21 @@ def user():
 @pytest.fixture(scope="module")
 def user_two():
     return {"email": "dead@example.com", "username": "pooldead", "password": "123456789"}
+
+
+@pytest.fixture(scope="module")
+def contact():
+    return {
+            "first_name": "first_name",
+            "last_name": "last_name",
+            "phone": "+38(050)123-45-78"
+    }
+
+
+@pytest.fixture(scope="module")
+def contact_update():
+    return {
+            "first_name": "first_update",
+            "last_name": "last_update",
+            "phone": "+38(050)111-11-11"
+    }

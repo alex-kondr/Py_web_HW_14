@@ -1,4 +1,4 @@
-from typing import List, Type
+from typing import List, Type, Optional
 
 from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File
 from fastapi_limiter.depends import RateLimiter
@@ -39,7 +39,7 @@ async def find_contacts_by_fields(first_name: str = None,
                                   last_name: str = None,
                                   phone: str = None,
                                   email: str = None,
-                                  days_before_birth: int = 7,
+                                  days_before_birth: Optional[int] = None,
                                   current_user: User = Depends(auth_service.get_current_user),
                                   db: Session = Depends(get_db)) -> List[Type[Contact]]:
     """

@@ -73,7 +73,7 @@ async def get_contact_by_fields(user: User,
                                 last_name: str = None,
                                 phone: str = None,
                                 email: str = None,
-                                days_before_birth: int = 0) -> List[Type[Contact]]:
+                                days_before_birth: Optional[int] = None) -> List[Type[Contact]]:
 
     """
     The get_contact_by_fields function is used to search for contacts by any of the following fields:
@@ -103,9 +103,10 @@ async def get_contact_by_fields(user: User,
     if email:
         contact = contact.filter(and_(Contact.email == email, Contact.user_id == user.id))
 
-    start_date = datetime.now()
-    end_date = start_date + timedelta(days=days_before_birth)
-    contact = contact.filter(and_(Contact.birthday.between(start_date, end_date), Contact.user_id == user.id))
+    if days_before_birth:
+        start_date = datetime.now()
+        end_date = start_date + timedelta(days=days_before_birth)
+        contact = contact.filter(and_(Contact.birthday.between(start_date, end_date), Contact.user_id == user.id))
 
     return contact.all()
 
@@ -225,7 +226,7 @@ async def remove_contact(contact_id: int, user: User, db: Session) -> Optional[C
         db.delete(contact)
         db.commit()
 
-    contacts_by_redis = await auth_service.r.keys(f"Contact id:{contact.id}*")
-    if contacts_by_redis:
-        await auth_service.r.delete(*contacts_by_redis)
+        contacts_by_redis = await auth_service.r.keys(f"Contact id:{contact.id}*")
+        if contacts_by_redis:
+            await auth_service.r.delete(*contacts_by_redis)
     return contact

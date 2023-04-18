@@ -97,29 +97,36 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
     async def test_get_contact_by_fields_first_name(self):
         user = User(id=1)
         contact = Contact()
-        self.session.query().filter().filter().all.return_value = contact
+        self.session.query().filter().all.return_value = contact
         result = await get_contact_by_fields(user=user, db=self.session, first_name="name")
         self.assertEqual(result, contact)
 
     async def test_get_contact_by_fields_last_name(self):
         user = User(id=1)
         contact = Contact()
-        self.session.query().filter().filter().all.return_value = contact
+        self.session.query().filter().all.return_value = contact
         result = await get_contact_by_fields(user=user, db=self.session, last_name="name")
         self.assertEqual(result, contact)
 
     async def test_get_contact_by_fields_phone(self):
         user = User(id=1)
         contact = Contact()
-        self.session.query().filter().filter().all.return_value = contact
+        self.session.query().filter().all.return_value = contact
         result = await get_contact_by_fields(user=user, db=self.session, phone="phone")
         self.assertEqual(result, contact)
 
     async def test_get_contact_by_fields_email(self):
         user = User(id=1)
         contact = Contact()
-        self.session.query().filter().filter().all.return_value = contact
+        self.session.query().filter().all.return_value = contact
         result = await get_contact_by_fields(user=user, db=self.session, email="email")
+        self.assertEqual(result, contact)
+
+    async def test_get_contact_by_fields_birthday(self):
+        user = User(id=1)
+        contact = Contact()
+        self.session.query().filter().all.return_value = contact
+        result = await get_contact_by_fields(user=user, db=self.session, days_before_birth=1)
         self.assertEqual(result, contact)
 
     async def test_create_contact(self):
@@ -195,7 +202,3 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         self.session.query().filter().first.return_value = contact
         result = await remove_contact(contact_id=1, user=user, db=self.session)
         self.assertEqual(result, contact)
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -16,7 +16,7 @@ class ContactModel(ContactBase):
     email: Optional[EmailStr]
     birthday: Optional[date]
     job: Optional[str]
-    groups: List[int]
+    groups: Optional[List[int]] = []
 
 
 class ContactUpdate(ContactModel):

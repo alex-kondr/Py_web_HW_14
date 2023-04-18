@@ -1,10 +1,8 @@
-import io
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from fastapi import UploadFile
 
-from src.database.models import User, Role
+from src.database.models import User
 
 
 def get_current_user(user, session):
@@ -45,7 +43,10 @@ def test_me(client, token, user):
     assert data["email"] == user.get("email")
 
 
-def test_update_profile(client, token):
+def test_update_profile(client, token, monkeypatch):
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.redis", AsyncMock())
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.identifier", AsyncMock())
+    monkeypatch.setattr("fastapi_limiter.FastAPILimiter.http_callback", AsyncMock())
     response = client.post(
         "api/users",
         headers={"Authorization": f"Bearer {token}"},

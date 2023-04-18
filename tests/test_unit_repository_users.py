@@ -81,7 +81,3 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         result = await save_new_password(user=self.user, password_hash=password, db=self.session)
         self.assertIsNone(result)
         self.assertEqual(self.user.password, password)
-
-
-if __name__ == '__main__':
-    unittest.main()
